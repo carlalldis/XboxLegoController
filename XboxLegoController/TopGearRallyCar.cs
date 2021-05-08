@@ -18,7 +18,7 @@ namespace XboxLegoController
             Hub = hub;
         }
 
-        public async Task Initialize()
+        public async Task InitializeAsync()
         {
             await Hub.RgbLight.SetRgbColorsAsync(0xff, 0x00, 0x00);
             await Hub.VerifyDeploymentModelAsync(modelBuilder => modelBuilder

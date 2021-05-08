@@ -4,6 +4,8 @@ using SharpBrick.PoweredUp.Functions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using System.Threading;
+using SharpDX.XInput;
 
 namespace XboxLegoController
 {
@@ -18,28 +20,10 @@ namespace XboxLegoController
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var host = serviceProvider.GetService<PoweredUpHost>();
+            var proxyController = new ProxyController();
+            await proxyController.InitializeAsync(host);
 
-            var hub = await host.DiscoverAsync<TechnicMediumHub>();
-            await hub.ConnectAsync();
-
-            var Car = new TopGearRallyCar(hub);
-            await Car.Initialize();
-
-            Console.WriteLine("Speed 100");
-            await Car.SetDriveSpeed(10);
             Console.ReadLine();
-            Console.WriteLine("Speed -100");
-            await Car.SetDriveSpeed(-10);
-            Console.ReadLine();
-            Console.WriteLine("Speed 0");
-            await Car.SetDriveSpeed(0);
-            Console.ReadLine();
-            await hub.SwitchOffAsync();
-        }
-
-        private static async Task<string> GetInputAsync()
-        {
-            return await Task.Run(() => Console.ReadLine());
         }
     }
 }

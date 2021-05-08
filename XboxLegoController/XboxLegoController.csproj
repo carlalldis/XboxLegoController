@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="SharpBrick.PoweredUp" Version="4.0.5" />
     <PackageReference Include="SharpBrick.PoweredUp.WinRT" Version="4.0.5" />
+    <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
   </ItemGroup>
 
 </Project>
