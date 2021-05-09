@@ -12,6 +12,7 @@ namespace XboxLegoController
         private TechnicMediumHub Hub;
         private TechnicLargeLinearMotor SteeringMotor;
         private TechnicXLargeLinearMotor DriveMotor;
+        private int _currentSpeed = 0;
 
         public TopGearRallyCar(TechnicMediumHub hub)
         {

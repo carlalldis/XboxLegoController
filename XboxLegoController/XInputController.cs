@@ -14,16 +14,26 @@ namespace XboxLegoController
         private GamepadButtonFlags _prevButtons;
         private short _prevLeftThumbX;
         private byte _prevRightTrigger;
-        public event ControllerEventHandler OnButtonChanged;
         public event ControllerEventHandler OnLeftThumbChanged;
         public event ControllerEventHandler OnRightTriggerChanged;
+        private TopGearRallyCar _car;
 
-        public XInputController()
+        public XInputController(TopGearRallyCar car)
         {
-            Console.WriteLine("Start XGamepadApp");
+            _car = car;
 
             // Initialize XInput
             Controllers = new[] { new Controller(UserIndex.One), new Controller(UserIndex.Two), new Controller(UserIndex.Three), new Controller(UserIndex.Four) };
+        }
+
+        private async Task ButtonChangeHandler()
+        {
+            if (State.Gamepad.Buttons.HasFlag(GamepadButtonFlags.A))
+                await _car.SetDriveSpeed(100);
+            else if (State.Gamepad.Buttons.HasFlag(GamepadButtonFlags.B))
+                await _car.SetDriveSpeed(-100);
+            else
+                await _car.SetDriveSpeed(0);
         }
 
         public async Task InitializeAsync()
@@ -65,8 +75,7 @@ namespace XboxLegoController
                             if (_prevButtons != State.Gamepad.Buttons)
                             {
                                 _prevButtons = State.Gamepad.Buttons;
-                                if (OnButtonChanged != null)
-                                    OnButtonChanged();
+                                await ButtonChangeHandler();
                             }
                             if (_prevLeftThumbX != State.Gamepad.LeftThumbX)
                             {

@@ -20,7 +20,7 @@ namespace XboxLegoController
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var host = serviceProvider.GetService<PoweredUpHost>();
-            var proxyController = new ProxyController();
+            var proxyController = new MainController();
             await proxyController.InitializeAsync(host);
 
             Console.ReadLine();
