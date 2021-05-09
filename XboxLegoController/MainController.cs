@@ -1,5 +1,6 @@
 ﻿using SharpBrick.PoweredUp;
 using SharpDX.XInput;
+using System;
 using System.Threading.Tasks;
 
 namespace XboxLegoController
@@ -19,12 +20,15 @@ namespace XboxLegoController
         {
             _host = host;
 
+            Console.WriteLine("Discovering Technic Hub");
             _hub = await _host.DiscoverAsync<TechnicMediumHub>();
             await _hub.ConnectAsync();
 
+            Console.WriteLine("Initializing Car");
             _car = new TopGearRallyCar(_hub);
             await _car.InitializeAsync();
 
+            Console.WriteLine("Initializing Controller");
             _controller = new XInputController(_car);
             await _controller.InitializeAsync();
         }

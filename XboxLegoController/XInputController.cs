@@ -99,13 +99,13 @@ namespace XboxLegoController
                 if (controller == null)
                 {
                     Console.WriteLine("No XInput controller found");
+                    await Task.Delay(1000);
                 }
                 else
                 {
                     var test = State.Gamepad.RightTrigger;
 
-                    Console.WriteLine("Found a XInput controller available");
-                    Console.WriteLine("Press buttons on the controller to display events or escape key to exit... ");
+                    Console.WriteLine("Controller found; ready for input.");
 
                     // Poll events from joystick
                     var previousState = controller.GetState();
