@@ -12,7 +12,6 @@ namespace XboxLegoController
         private TechnicMediumHub Hub;
         private TechnicLargeLinearMotor SteeringMotor;
         private TechnicXLargeLinearMotor DriveMotor;
-        private int _currentSpeed = 0;
 
         public TopGearRallyCar(TechnicMediumHub hub)
         {
@@ -35,12 +34,12 @@ namespace XboxLegoController
 
         public async Task SetSteeringDegrees(int degrees)
         {
-            await SteeringMotor.GotoPositionAsync(degrees, 10, 100, SpecialSpeed.Brake);
+            await SteeringMotor.GotoPositionAsync(degrees, 25, 100, SpecialSpeed.Hold);
         }
 
         public async Task SetDriveSpeed(int speed)
         {
-            await DriveMotor.StartSpeedAsync((sbyte)speed, 100, SpeedProfiles.None);
+            await DriveMotor.StartSpeedAsync((sbyte)speed, 100, SpeedProfiles.AccelerationProfile);
         }
     }
 }

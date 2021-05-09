@@ -13,10 +13,13 @@ namespace XboxLegoController
         public State State;
         private GamepadButtonFlags _prevButtons;
         private short _prevLeftThumbX;
+        private byte _prevLeftTrigger;
         private byte _prevRightTrigger;
         public event ControllerEventHandler OnLeftThumbChanged;
         public event ControllerEventHandler OnRightTriggerChanged;
         private TopGearRallyCar _car;
+        private int _prevSpeed = 0;
+        private int _prevAngle = 0;
 
         public XInputController(TopGearRallyCar car)
         {
@@ -34,6 +37,48 @@ namespace XboxLegoController
                 await _car.SetDriveSpeed(-100);
             else
                 await _car.SetDriveSpeed(0);
+        }
+
+        private async Task TriggerChangeHandler()
+        {
+            int newSpeed = 0;
+            if (State.Gamepad.LeftTrigger == 0 || State.Gamepad.RightTrigger == 0)
+            {
+                if (State.Gamepad.LeftTrigger > 0)
+                {
+                    newSpeed = - CalcSpeed(State.Gamepad.LeftTrigger);
+                }
+                else
+                {
+                    newSpeed = CalcSpeed(State.Gamepad.RightTrigger);
+                }
+            }
+            if (newSpeed != _prevSpeed)
+            {
+                await _car.SetDriveSpeed(newSpeed);
+                _prevSpeed = newSpeed;
+            }
+        }
+
+        private async Task ThumbChangeHandler()
+        {
+            var newAngle = CalcAngle(State.Gamepad.LeftThumbX);
+            if (newAngle != _prevAngle)
+            {
+                await _car.SetSteeringDegrees(newAngle);
+                _prevAngle = newAngle;
+            }
+
+        }
+
+        private int CalcSpeed(int trigger)
+        {
+            return trigger * 100 / 255;
+        }
+
+        private int CalcAngle(int thumbstick)
+        {
+            return thumbstick * 45 / 32768;
         }
 
         public async Task InitializeAsync()
@@ -66,6 +111,7 @@ namespace XboxLegoController
                     var previousState = controller.GetState();
                     _prevButtons = previousState.Gamepad.Buttons;
                     _prevLeftThumbX = previousState.Gamepad.LeftThumbX;
+                    _prevLeftTrigger = previousState.Gamepad.LeftTrigger;
                     _prevRightTrigger = previousState.Gamepad.RightTrigger;
                     while (controller.IsConnected)
                     {
@@ -80,18 +126,16 @@ namespace XboxLegoController
                             if (_prevLeftThumbX != State.Gamepad.LeftThumbX)
                             {
                                 _prevLeftThumbX = State.Gamepad.LeftThumbX;
-                                if (OnLeftThumbChanged != null)
-                                    OnLeftThumbChanged();
+                                await ThumbChangeHandler();
                             }
-                            if (_prevRightTrigger != State.Gamepad.RightTrigger)
+                            if (_prevLeftTrigger != State.Gamepad.LeftTrigger || _prevRightTrigger != State.Gamepad.RightTrigger)
                             {
                                 _prevRightTrigger = State.Gamepad.RightTrigger;
-                                if (OnRightTriggerChanged != null)
-                                    OnRightTriggerChanged();
+                                _prevLeftTrigger = State.Gamepad.LeftTrigger;
+                                await TriggerChangeHandler();
                             }
-                            Console.WriteLine(State.Gamepad);
                         }
-                        await Task.Delay(10);
+                        await Task.Delay(50);
                         previousState = State;
                     }
                 }
